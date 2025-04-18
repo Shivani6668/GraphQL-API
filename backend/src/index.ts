@@ -2,13 +2,27 @@ import express from "express";
 import { ApolloServer } from "@apollo/server";
 import {startStandaloneServer} from "@apollo/server/standalone";
 import { schema } from "./graphql/schema/schema";
+import { connectDB } from "./Database/DB";
+import dotenv from "dotenv"
+import { getAllUser } from "./controller/userController";
+import { getAllCourse, getCourseById } from "./controller/courseController";
+
+dotenv.config({ path:"./.env"})
+
 const PORT = Number(process.env.PORT) || 8000;
+
+const mongoURI = process.env.mongoURI!;
+connectDB(mongoURI)
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers: {
     Query:{
-      hello: () => `Hey there!, I am graphql server running on port ${PORT}`,
-      hello2: () => `Hey there2!, I am graphql2 server running on port ${PORT}`,
+      users: getAllUser,
+      courses: getAllCourse,
+      course: getCourseById
+
+      
     }
   },
 })
